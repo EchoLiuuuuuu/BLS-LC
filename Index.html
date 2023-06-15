@@ -1,13 +1,98 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>BLS Monthly Release</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body>
-    <h1>JOLTS, ESR, CPI graphs</h1>
-    <p>All in Lightcast format</p>
+<html lang="en">
 
-    <script src="script.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Local</title>
+<!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <style type="text/css">
+    @font-face {
+        font-family: "Lausanne";
+        src: url("./TWKLausanne-400.ttf") format("truetype");
+    }
+    h2{ 
+        font-family: "Lausanne", Verdana, Tahoma;
+    }
+  </style>
+
+<script type="text/babel">
+    // Obtain the root 
+    const rootElement = document.getElementById('root')
+    // Create a ES6 class component    
+    class Chart extends React.Component { 
+    // Use the render function to return JSX component      
+        render() { 
+            return (
+            <div style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px", width : "50vw", top:"50%", left:"50%"}} className="chart">
+              <p>{this.props.title}</p>              
+              <img style={{top:"50%", left:"50%", margin:"auto", width:"50vw"}} src={this.props.imgurl}/>
+            </div>
+        );
+        } 
+    }
+
+    const SimpleList = ({ list }) => (
+      <ul>
+  
+        {list.map(item => (
+          <Chart title="" imgurl={item} />
+        ))}
+      </ul>
+    );
+
+    const urls = ["https://bls-jolts.s3.amazonaws.com/Unemployed+to+Openings+Ratio.png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+quits+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+separations+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+quits+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+layoffs+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Major).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Breakdown).png",
+                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+hires+(Current+month+only).png",
+                    // "https://bls-jolts.s3.amazonaws.com/Separations+by+Type.png",
+                    "https://bls-jolts.s3.amazonaws.com/Separations+by+Type+(numbers).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+separations+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+quits+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+layoffs+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Major).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Breakdown).png",
+                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+hires+(Current+month+only).png",
+                    "https://bls-jolts.s3.amazonaws.com/Monthly+job+openings.png",
+                    "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
+                    "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
+
+      const dateUrl = ["insert date url here"]
+      
+    // Create a function to wrap up your component
+    function App(){
+      // console.log("hi")
+      return(
+        <div>
+        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>
+        <SimpleList list={urls}/>
+        </div>
+      )
+    }
+
+
+// Use the ReactDOM.render to show your component on the browser
+    ReactDOM.render(
+      <App />,
+      rootElement
+    )
+</script>
+
 </body>
+
 </html>
