@@ -5,11 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Lightcast JOLTS Graphs</title>
+  <title>React Local</title>
 <!-- Import the React, React-Dom and Babel libraries from unpkg -->
-  <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
-  <script type="application/javascript" src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+  <!-- <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-chartjs-2/2.1.0/react-chartjs-2.min.js"></script> -->
+  <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
 </head>
 
 <body>
@@ -20,7 +24,7 @@
         font-family: "Lausanne";
         src: url("./TWKLausanne-400.ttf") format("truetype");
     }
-    h2{ 
+    h2,h1{ 
         font-family: "Lausanne", Verdana, Tahoma;
     }
   </style>
@@ -29,11 +33,11 @@
     // Obtain the root 
     const rootElement = document.getElementById('root')
     // Create a ES6 class component    
-    class Chart extends React.Component { 
+    class ImageChart extends React.Component { 
     // Use the render function to return JSX component      
         render() { 
             return (
-            <div style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px", width : "50vw", top:"50%", left:"50%"}} className="chart">
+            <div style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px", width : "50vw", top:"50%", left:"50%"}} className="ImageChart">
               <p>{this.props.title}</p>              
               <img style={{top:"50%", left:"50%", margin:"auto", width:"50vw"}} src={this.props.imgurl}/>
             </div>
@@ -41,11 +45,81 @@
         } 
     }
 
+    async function getData(url){
+
+      await fetch(url,
+        {method: 'GET',
+           mode: 'cors',
+           })            
+      .then(
+    response => {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+          response.status);
+        console.log(response);
+        return;
+      }
+      // Examine the text in the response
+      response.json().then(function(data) {
+        console.log(data);
+      });
+    })
+  .catch(err => console.log('Fetch Error :-S', err));
+    }
+
+    class InteractiveChart extends React.Component {
+      
+      // data = fetch(this.props.dataurl).json();
+      constructor (props) {
+        super(props)
+        this.state = {
+          data : null
+        }
+      }
+      
+      componentDidMount() {
+        const loadedData = getData(this.props.dataurl);
+        console.log(loadedData);
+        this.setState({
+                data: loadedData
+            });
+      }
+
+      render () {
+
+        // const data = getData(this.props.dataurl);
+        if (!this.state.data) {
+            return <div />
+        }
+        console.log("created chart!")
+        return (
+          
+          <LineChart style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px",marginTop:"100px", width : "50vw"}} width={730} height={250} data={data}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+          <XAxis dataKey="month_year" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" />          
+        </LineChart>
+        );
+      }
+    }
+
     const SimpleList = ({ list }) => (
       <ul>
   
         {list.map(item => (
-          <Chart title="" imgurl={item} />
+          <ImageChart title="" imgurl={item} />
+        ))}
+      </ul>
+    );
+
+    const InteractiveList = ({ list }) => (
+      <ul>
+        {list.map(item => (
+          <InteractiveChart title="" dataurl={item} />
         ))}
       </ul>
     );
@@ -72,15 +146,84 @@
                     "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
                     "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
 
-      const dateUrl = ["insert date url here"]
-      
+    const interactiveURLS = ["https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json"]
+    const dateUrl = ["insert date url here"];
     // Create a function to wrap up your component
+    // const { useState } = React;
+
+    console.log(window.Recharts);
+
+    
+    const { PieChart, 
+      Pie, Line,LineChart,linearGradient,XAxis,YAxis,CartesianGrid,Tooltip, Legend } = window.Recharts
+    
+    const innerdata = [
+      { name: 'C1', value: 100 },
+      { name: 'C2', value: 20 },
+      { name: 'C3', value: 300 },
+      { name: 'C4', value: 90 },
+    ];
+
+    const outerdata = [
+      { name: 'P1', value: 10 },
+      { name: 'P2', value: 100 },
+      { name: 'P3', value: 20 },
+      { name: 'P4', value: 30 },
+      { name: 'P5', value: 90 }
+    ];
+
+    const data = [
+      {
+        "name": "Page A",
+        "uv": 4000,
+        "pv": 2400,
+        "amt": 2400
+      },
+      {
+        "name": "Page B",
+        "uv": 3000,
+        "pv": 1398,
+        "amt": 2210
+      },
+      {
+        "name": "Page C",
+        "uv": 2000,
+        "pv": 9800,
+        "amt": 2290
+      },
+      {
+        "name": "Page D",
+        "uv": 2780,
+        "pv": 3908,
+        "amt": 2000
+      },
+      {
+        "name": "Page E",
+        "uv": 1890,
+        "pv": 4800,
+        "amt": 2181
+      },
+      {
+        "name": "Page F",
+        "uv": 2390,
+        "pv": 3800,
+        "amt": 2500
+      },
+      {
+        "name": "Page G",
+        "uv": 3490,
+        "pv": 4300,
+        "amt": 2100
+      }
+    ]
+
     function App(){
-      // console.log("hi")
+
       return(
         <div>
-        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>
-        <SimpleList list={urls}/>
+        <h1 style={{margin:"auto",textAlign:"center",padding:"20px"}}>JOLTS Data</h1>
+        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>        
+        <InteractiveList list={interactiveURLS}/>
         </div>
       )
     }
