@@ -94,7 +94,7 @@
         console.log("created chart!")
         return (
           
-          <LineChart style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px",marginTop:"100px", width : "50vw"}} width={730} height={250} data={data}
+          <LineChart style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px",marginTop:"100px", width : "50vw"}} width={730} height={250} data={this.state.data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <XAxis dataKey="month_year" />
           <YAxis />
@@ -217,12 +217,14 @@
       }
     ]
 
+    const testData = [{"series_name":"Openings","value":7.52,"month_year":"Jan 2019"},{"series_name":"Openings","value":7.07,"month_year":"Feb 2019"},{"series_name":"Openings","value":7.34,"month_year":"Mar 2019"},{"series_name":"Openings","value":7.19,"month_year":"Apr 2019"},{"series_name":"Openings","value":7.31,"month_year":"May 2019"},{"series_name":"Openings","value":7.14,"month_year":"June 2019"},{"series_name":"Openings","value":7.05,"month_year":"July 2019"},{"series_name":"Openings","value":7.17,"month_year":"Aug 2019"},{"series_name":"Openings","value":7.16,"month_year":"Sep 2019"},{"series_name":"Openings","value":7.32,"month_year":"Oct 2019"},{"series_name":"Openings","value":6.92,"month_year":"Nov 2019"},{"series_name":"Openings","value":6.71,"month_year":"Dec 2019"},{"series_name":"Openings","value":7.18,"month_year":"Jan 2020"},{"series_name":"Openings","value":7.0,"month_year":"Feb 2020"},{"series_name":"Openings","value":5.79,"month_year":"Mar 2020"},{"series_name":"Openings","value":4.69,"month_year":"Apr 2020"},{"series_name":"Openings","value":5.58,"month_year":"May 2020"},{"series_name":"Openings","value":6.12,"month_year":"June 2020"},{"series_name":"Openings","value":6.51,"month_year":"July 2020"},{"series_name":"Openings","value":6.36,"month_year":"Aug 2020"},{"series_name":"Openings","value":6.51,"month_year":"Sep 2020"},{"series_name":"Openings","value":6.82,"month_year":"Oct 2020"},{"series_name":"Openings","value":6.88,"month_year":"Nov 2020"},{"series_name":"Openings","value":6.85,"month_year":"Dec 2020"},{"series_name":"Openings","value":7.18,"month_year":"Jan 2021"},{"series_name":"Openings","value":7.76,"month_year":"Feb 2021"},{"series_name":"Openings","value":8.4,"month_year":"Mar 2021"},{"series_name":"Openings","value":9.29,"month_year":"Apr 2021"},{"series_name":"Openings","value":9.84,"month_year":"May 2021"},{"series_name":"Openings","value":10.07,"month_year":"June 2021"},{"series_name":"Openings","value":10.88,"month_year":"July 2021"},{"series_name":"Openings","value":10.96,"month_year":"Aug 2021"},{"series_name":"Openings","value":10.88,"month_year":"Sep 2021"},{"series_name":"Openings","value":11.37,"month_year":"Oct 2021"},{"series_name":"Openings","value":11.23,"month_year":"Nov 2021"},{"series_name":"Openings","value":11.83,"month_year":"Dec 2021"},{"series_name":"Openings","value":11.49,"month_year":"Jan 2022"},{"series_name":"Openings","value":11.6,"month_year":"Feb 2022"},{"series_name":"Openings","value":12.03,"month_year":"Mar 2022"},{"series_name":"Openings","value":11.76,"month_year":"Apr 2022"},{"series_name":"Openings","value":11.44,"month_year":"May 2022"},{"series_name":"Openings","value":10.96,"month_year":"June 2022"},{"series_name":"Openings","value":11.38,"month_year":"July 2022"},{"series_name":"Openings","value":10.2,"month_year":"Aug 2022"},{"series_name":"Openings","value":10.85,"month_year":"Sep 2022"},{"series_name":"Openings","value":10.47,"month_year":"Oct 2022"},{"series_name":"Openings","value":10.75,"month_year":"Nov 2022"},{"series_name":"Openings","value":11.23,"month_year":"Dec 2022"},{"series_name":"Openings","value":10.56,"month_year":"Jan 2023"},{"series_name":"Openings","value":9.97,"month_year":"Feb 2023"},{"series_name":"Openings","value":9.74,"month_year":"Mar 2023"},{"series_name":"Openings","value":10.1,"month_year":"Apr 2023"}]
+
     function App(){
 
       return(
         <div>
         <h1 style={{margin:"auto",textAlign:"center",padding:"20px"}}>JOLTS Data</h1>
-        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>        
+        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>                
         <InteractiveList list={interactiveURLS}/>
         </div>
       )
