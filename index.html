@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>React Local</title>
+  <title>BLS Data for Lightcast</title>
   <!-- Import the React, React-Dom and Babel libraries from unpkg -->
   <script type="application/javascript" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script type="application/javascript" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -31,11 +31,16 @@
     h4 {
       font-family: "Lausanne", Verdana, Tahoma;
     }
+
+    html * {
+      font-family: "Lausanne";
+    }
   </style>
 
   <script type="text/babel">
     // Obtain the root 
     const rootElement = document.getElementById('root')
+    const colors = ["#FF2F59", "#CA61FF", "#18E8F5", "#0A5D62", "#8A8A8A", "#2E5299", "#93293B"]
     // Create a ES6 class component    
     class ImageChart extends React.Component {
       // Use the render function to return JSX component      
@@ -75,6 +80,8 @@
         .catch(err => console.log('Fetch Error :-S', err));
     }
 
+
+
     class InteractiveChart extends React.Component {
 
       // data = fetch(this.props.dataurl).json();
@@ -89,6 +96,7 @@
 
         // const loadedData = getData(this.props.dataurl)
         let self = this;
+        console.log(this.props)
         fetch(this.props.dataurl,
           {
             method: 'GET',
@@ -127,33 +135,79 @@
         if (typeof (this.state.data) == 'undefined') {
           return <div />
         }
-        var series_name = "None"
-        // console.log("created chart!")
-        if (typeof (this.state.data[0]) == 'undefined') {
-          console.log("no data yet")
-        } else {
-          console.log(this.state.data[0].series_name)
-          series_name = this.state.data[0].series_name
+
+        if (this.props.chart_type == "line") {
+          return (
+            <div style={{ margin: "0 auto", width: "50vw" }}>
+              <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
+              <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
+
+              <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }} width={730} height={250} data={this.state.data}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <XAxis dataKey={this.props.axis} style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'Arial',
+                }} />
+                <YAxis style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'Arial',
+                }} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Tooltip style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'Arial',
+                }} />
+                <Legend style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'Arial',
+                }} />
+
+                {
+                  this.props.series_indices.map((id) => {
+                    return (<Line type="monotone" dot={false} name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} stroke={colors[id]} />)
+                  })
+                }
+
+              </LineChart>
+              <h4 style={{ marginTop: "2px" }}>Source: Bureau of Labor Statistics</h4>
+
+            </div>
+          );
         }
-        return (
+
+        if (this.props.chart_type == "bar") {
+          return (
           <div style={{ margin: "0 auto", width: "50vw" }}>
             <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
             <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
-            
-            <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }} width={730} height={250} data={this.state.data}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <XAxis dataKey="month_year" />
-              <YAxis />
+            <BarChart
+              width={730}
+              height={250}
+              data={this.state.data}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey={this.props.axis} />
+              <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" name={series_name} dataKey="value" stroke="#FF2F59" />
-
-            </LineChart>
+              {
+                  this.props.series_indices.map((id) => {
+                    return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} />)
+                  })
+              }              
+            </BarChart>
             <h4 style={{ marginTop: "2px" }}>Source: Bureau of Labor Statistics</h4>
 
           </div>
-        );
+          );
+        }
+
       }
     }
 
@@ -169,7 +223,15 @@
     const InteractiveList = ({ list }) => (
       <ul>
         {list.map(item => (
-          <InteractiveChart title={item.title} dataurl={item.link} subtitle={item.subtitle} />
+          <InteractiveChart title={item.title}
+            dataurl={item.link}
+            subtitle={item.subtitle}
+            series_indices={item.series_indices}
+            chart_type={item.chart_type}
+            axis={item.axis}
+            series_ids={item.series_ids}
+            series_names={item.series_names}
+          />
         ))}
       </ul>
     );
@@ -196,30 +258,77 @@
       "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
       "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
 
+    // const interactiveURLS = [{
+    //   "link": "https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json",
+    //   "title": "Monthly job openings",
+    //   "subtitle": "In millions and seasonally adjusted",
+    //   "num_series": 1,
+    //   "chart_type": "line",
+    //   "series_ids":["value"],
+    //   "series_names" :["Openings"]
+    // }]
     const interactiveURLS = [{
-      "link": "https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json",
-      "title": "Monthly job openings",
-      "subtitle": "In millions and seasonally adjusted",
-      "num_series" : 1,
-      "chart_type" : "line"
-
+      "link": "https://bls-cpi.s3.amazonaws.com/json_all_change.json",
+      "title": "CPI for all urban customers",
+      "subtitle": "All items in US city everage",
+      "chart_type": "line",
+      "axis": "month_year",
+      "series_indices": [0, 1],
+      "series_ids": ["cpi_yoy_change", "change_mom_cpi"],
+      "series_names": ["YoY CPI Change", "MoM CPI Change"]
+    },
+    {
+      "link": "https://bls-cpi.s3.amazonaws.com/json_all_core_change.json",
+      "title": "CPI for all urban customers",
+      "subtitle": "All items in US city everage",
+      "chart_type": "line",
+      "axis": "month_year",
+      "series_indices": [0, 1],
+      "series_ids": ["change_mom_cpi_all", "change_mom_cpi_core"],
+      "series_names": ["All items", "All items less food and energy"]
+    },
+    {
+      "link": "https://bls-cpi.s3.amazonaws.com/json_final_yoy_all_items_change_2.json",
+      "title": "CPI for all urban customers",
+      "subtitle": "Percent change from 12 months ago, unadjusted",
+      "chart_type": "bar",
+      "axis": "series_name",
+      "series_indices": [0, 1, 2],
+      "series_ids": ["Apr 2023", "Mar 2023", "May 2023"],
+      "series_names": ["April 2023", "Mar 2023", "May 2023"]
+    },
+    {
+      "link": "https://bls-cpi.s3.amazonaws.com/json_Comp_cpi_yoy.json",
+      "title": "YOY Change for Hourly Earnings and CPI",
+      "subtitle": "In percentage and unadjusted",
+      "chart_type": "line",
+      "axis": "month_year",
+      "series_indices": [0, 1],
+      "series_ids": ["increase", "cpi_yoy_change"],
+      "series_names": ["Increase in Hourly Earnings", "CPI (all items)"]
+    },{
+      "link": "https://bls-cpi.s3.amazonaws.com/json_final_yoy_cat_items_change.json",
+      "title": "CPI for all urban customers",
+      "subtitle": "Percent change from 12 months ago, unadjusted",
+      "chart_type": "bar",
+      "axis": "series_title",
+      "series_indices": [0, 1, 2],
+      "series_ids": ["Apr 2023", "Mar 2023", "May 2023"],
+      "series_names": ["April 2023", "Mar 2023", "May 2023"]
     }]
-    const dateUrl = ["insert date url here"];
-    // Create a function to wrap up your component
-    // const { useState } = React;
 
-    console.log(window.Recharts);
 
 
     const { PieChart,
-      Pie, Line, LineChart, linearGradient, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts
+      Pie, Line, LineChart, linearGradient, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+    Bar, BarChart } = window.Recharts
 
 
     function App() {
 
       return (
         <div>
-          <h1 style={{ margin: "auto", textAlign: "center", padding: "20px" }}>JOLTS Data</h1>
+          <h1 style={{ margin: "auto", textAlign: "center", padding: "20px" }}>CPI Data</h1>
           <h2 style={{ margin: "auto", textAlign: "center" }}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>
           <InteractiveList list={interactiveURLS} />
         </div>
