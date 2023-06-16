@@ -142,7 +142,8 @@
               <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
               <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
 
-              <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }} width={730} height={250} data={this.state.data}
+              <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }}
+               width={750} height={400} data={this.state.data}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <XAxis dataKey={this.props.axis} style={{
                   fontSize: '0.8rem',
@@ -169,8 +170,10 @@
                 }
 
               </LineChart>
-              <h4 style={{ marginTop: "2px" }}>Source: Bureau of Labor Statistics</h4>
-
+              <div style={{marginBottom:"100px"}}>
+              <h4 style={{ marginTop: "2px",display: "inline-block", float:"left" }}>Source: Bureau of Labor Statistics</h4>
+              <img src="Lightcast Tessell.PNG" style={{width:87, height:20, display: "inline-block",float:"right"}} />
+              </div>
             </div>
           );
         }
@@ -181,7 +184,7 @@
             <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
             <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
             <BarChart
-              width={730}
+              width={750}
               height={250}
               data={this.state.data}
               margin={{
@@ -202,8 +205,10 @@
                   })
               }              
             </BarChart>
-            <h4 style={{ marginTop: "2px" }}>Source: Bureau of Labor Statistics</h4>
-
+            <div style={{marginBottom:"100px"}}>
+            <h4 style={{ marginTop: "2px",display: "inline-block", float:"left" }}>Source: Bureau of Labor Statistics</h4>
+            <img src="Lightcast Tessell.PNG" style={{width:87, height:20, display: "inline-block",float:"right"}} />
+            </div>
           </div>
           );
         }
