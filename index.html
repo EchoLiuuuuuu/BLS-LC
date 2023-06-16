@@ -138,41 +138,42 @@
 
         if (this.props.chart_type == "line") {
           return (
-            <div style={{ margin: "0 auto", width: "50vw" }}>
+            <div style={{ margin: "0 auto", width: "50vw", height: "500px", marginBottom: "150px" }}>
               <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
-              <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
+              <h4 style={{ marginTop: "2px", marginBottom: "10px" }}>{this.props.subtitle}</h4>
+              <ResponsiveContainer width="100%" height="100%" style={{ marginBottom: "100px" }}>
+                <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }}
+                  width={750} height={400} data={this.state.data}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <XAxis dataKey={this.props.axis} style={{
+                    fontSize: '0.8rem',
+                    fontFamily: 'Arial',
+                  }} />
+                  <YAxis style={{
+                    fontSize: '0.8rem',
+                    fontFamily: 'Arial',
+                  }} />
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <Tooltip style={{
+                    fontSize: '0.8rem',
+                    fontFamily: 'Arial',
+                  }} />
+                  <Legend style={{
+                    fontSize: '0.8rem',
+                    fontFamily: 'Arial',
+                  }} />
 
-              <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }}
-               width={750} height={400} data={this.state.data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <XAxis dataKey={this.props.axis} style={{
-                  fontSize: '0.8rem',
-                  fontFamily: 'Arial',
-                }} />
-                <YAxis style={{
-                  fontSize: '0.8rem',
-                  fontFamily: 'Arial',
-                }} />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip style={{
-                  fontSize: '0.8rem',
-                  fontFamily: 'Arial',
-                }} />
-                <Legend style={{
-                  fontSize: '0.8rem',
-                  fontFamily: 'Arial',
-                }} />
+                  {
+                    this.props.series_indices.map((id) => {
+                      return (<Line type="monotone" dot={false} name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} stroke={colors[id]} />)
+                    })
+                  }
 
-                {
-                  this.props.series_indices.map((id) => {
-                    return (<Line type="monotone" dot={false} name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} stroke={colors[id]} />)
-                  })
-                }
-
-              </LineChart>
-              <div style={{marginBottom:"100px"}}>
-              <h4 style={{ marginTop: "2px",display: "inline-block", float:"left" }}>Source: Bureau of Labor Statistics</h4>
-              <img src="Lightcast Tessell.PNG" style={{width:87, height:20, display: "inline-block",float:"right"}} />
+                </LineChart>
+              </ResponsiveContainer >
+              <div>
+                <h4 style={{ marginTop: "2px", display: "inline-block", float: "left" }}>Source: Bureau of Labor Statistics</h4>
+                <img src="Lightcast Tessell.PNG" style={{ width: 87, height: 20, display: "inline-block", float: "right" }} />
               </div>
             </div>
           );
@@ -180,36 +181,38 @@
 
         if (this.props.chart_type == "bar") {
           return (
-          <div style={{ margin: "0 auto", width: "50vw" }}>
-            <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
-            <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
-            <BarChart
-              width={750}
-              height={250}
-              data={this.state.data}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={this.props.axis} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              {
-                  this.props.series_indices.map((id) => {
-                    return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} />)
-                  })
-              }              
-            </BarChart>
-            <div style={{marginBottom:"100px"}}>
-            <h4 style={{ marginTop: "2px",display: "inline-block", float:"left" }}>Source: Bureau of Labor Statistics</h4>
-            <img src="Lightcast Tessell.PNG" style={{width:87, height:20, display: "inline-block",float:"right"}} />
+            <div style={{ margin: "0 auto", width: "50vw", height: "500px", marginBottom: "150px"}}>
+              <h2 style={{ marginTop: "30px", marginBottom: "3px"}}>{this.props.title}</h2>
+              <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  width={750}
+                  height={250}
+                  data={this.state.data}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey={this.props.axis} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {
+                    this.props.series_indices.map((id) => {
+                      return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} />)
+                    })
+                  }
+                </BarChart>
+              </ResponsiveContainer>
+              <div>
+                <h4 style={{ marginTop: "2px", display: "inline-block", float: "left" }}>Source: Bureau of Labor Statistics</h4>
+                <img src="Lightcast Tessell.PNG" style={{ width: 87, height: 20, display: "inline-block", float: "right" }} />
+              </div>
             </div>
-          </div>
           );
         }
 
@@ -311,7 +314,7 @@
       "series_indices": [0, 1],
       "series_ids": ["increase", "cpi_yoy_change"],
       "series_names": ["Increase in Hourly Earnings", "CPI (all items)"]
-    },{
+    }, {
       "link": "https://bls-cpi.s3.amazonaws.com/json_final_yoy_cat_items_change.json",
       "title": "CPI for all urban customers",
       "subtitle": "Percent change from 12 months ago, unadjusted",
@@ -326,7 +329,7 @@
 
     const { PieChart,
       Pie, Line, LineChart, linearGradient, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    Bar, BarChart } = window.Recharts
+      Bar, BarChart } = window.Recharts
 
 
     function App() {
