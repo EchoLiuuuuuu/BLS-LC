@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>React Local</title>
-<!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <!-- Import the React, React-Dom and Babel libraries from unpkg -->
   <script type="application/javascript" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script type="application/javascript" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
@@ -21,95 +21,145 @@
 
   <style type="text/css">
     @font-face {
-        font-family: "Lausanne";
-        src: url("./TWKLausanne-400.ttf") format("truetype");
+      font-family: "Lausanne";
+      src: url("./TWKLausanne-400.ttf") format("truetype");
     }
-    h2,h1{ 
-        font-family: "Lausanne", Verdana, Tahoma;
+
+    h2,
+    h1,
+    h3,
+    h4 {
+      font-family: "Lausanne", Verdana, Tahoma;
     }
   </style>
 
-<script type="text/babel">
+  <script type="text/babel">
     // Obtain the root 
     const rootElement = document.getElementById('root')
     // Create a ES6 class component    
-    class ImageChart extends React.Component { 
-    // Use the render function to return JSX component      
-        render() { 
-            return (
-            <div style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px", width : "50vw", top:"50%", left:"50%"}} className="ImageChart">
-              <p>{this.props.title}</p>              
-              <img style={{top:"50%", left:"50%", margin:"auto", width:"50vw"}} src={this.props.imgurl}/>
-            </div>
+    class ImageChart extends React.Component {
+      // Use the render function to return JSX component      
+      render() {
+        return (
+          <div style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "100px", width: "50vw", top: "50%", left: "50%" }} className="ImageChart">
+            <p>{this.props.title}</p>
+            <img style={{ top: "50%", left: "50%", margin: "auto", width: "50vw" }} src={this.props.imgurl} />
+          </div>
         );
-        } 
+      }
     }
 
-    async function getData(url){
+    async function getData(url) {
 
-      await fetch(url,
-        {method: 'GET',
-           mode: 'cors',
-           })            
-      .then(
-    response => {
-      if (response.status !== 200) {
-        console.log('Looks like there was a problem. Status Code: ' +
-          response.status);
-        console.log(response);
-        return;
-      }
-      // Examine the text in the response
-      response.json().then(function(data) {
-        console.log(data);
-      });
-    })
-  .catch(err => console.log('Fetch Error :-S', err));
+      return await fetch(url,
+        {
+          method: 'GET',
+          mode: 'cors',
+        })
+        .then(
+          response => {
+            if (response.status !== 200) {
+              console.log('Looks like there was a problem. Status Code: ' +
+                response.status);
+              console.log(response);
+              return;
+            }
+            // Examine the text in the response
+            response.json().then(function (data) {
+              console.log("Got data!")
+              // console.log(data);
+              return data;
+            });
+
+          })
+        .catch(err => console.log('Fetch Error :-S', err));
     }
 
     class InteractiveChart extends React.Component {
-      
+
       // data = fetch(this.props.dataurl).json();
-      constructor (props) {
+      constructor(props) {
         super(props)
         this.state = {
-          data : null
+          data: []
         }
       }
-      
-      componentDidMount() {
-        const loadedData = getData(this.props.dataurl);
-        console.log(loadedData);
-        this.setState({
-                data: loadedData
-            });
+
+      componentDidMount = () => {
+
+        // const loadedData = getData(this.props.dataurl)
+        let self = this;
+        fetch(this.props.dataurl,
+          {
+            method: 'GET',
+            mode: 'cors',
+          })
+          .then(
+            response => {
+              if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' +
+                  response.status);
+                console.log(response);
+                return;
+              }
+              // Examine the text in the response
+              response.json().then(function (data) {
+                console.log("Got data!")
+                console.log(data);
+                self.setState({
+                  data: data
+                });
+                return;
+              });
+
+            })
+          .catch(err => console.log('Fetch Error :-S', err));
+        console.log(this.state.data);
+        // this.setState({
+        //   data: loadedData
+        // });
       }
 
-      render () {
+      render() {
 
         // const data = getData(this.props.dataurl);
-        if (!this.state.data) {
-            return <div />
+        console.log(this.state.data);
+        if (typeof (this.state.data) == 'undefined') {
+          return <div />
         }
-        console.log("created chart!")
+        var series_name = "None"
+        // console.log("created chart!")
+        if (typeof (this.state.data[0]) == 'undefined') {
+          console.log("no data yet")
+        } else {
+          console.log(this.state.data[0].series_name)
+          series_name = this.state.data[0].series_name
+        }
         return (
-          
-          <LineChart style={{ marginRight: "auto",marginLeft:"auto",marginBottom:"100px",marginTop:"100px", width : "50vw"}} width={730} height={250} data={this.state.data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-          <XAxis dataKey="month_year" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />          
-        </LineChart>
+          <div style={{ margin: "0 auto", width: "50vw" }}>
+            <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
+            <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
+            
+            <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }} width={730} height={250} data={this.state.data}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <XAxis dataKey="month_year" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" name={series_name} dataKey="value" stroke="#FF2F59" />
+
+            </LineChart>
+            <h4 style={{ marginTop: "2px" }}>Source: Bureau of Labor Statistics</h4>
+
+          </div>
         );
       }
     }
 
     const SimpleList = ({ list }) => (
       <ul>
-  
+
         {list.map(item => (
           <ImageChart title="" imgurl={item} />
         ))}
@@ -119,124 +169,70 @@
     const InteractiveList = ({ list }) => (
       <ul>
         {list.map(item => (
-          <InteractiveChart title="" dataurl={item} />
+          <InteractiveChart title={item.title} dataurl={item.link} subtitle={item.subtitle} />
         ))}
       </ul>
     );
 
     const urls = ["https://bls-jolts.s3.amazonaws.com/Unemployed+to+Openings+Ratio.png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+quits+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+separations+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+quits+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+layoffs+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Major).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Breakdown).png",
-                    "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+hires+(Current+month+only).png",
-                    // "https://bls-jolts.s3.amazonaws.com/Separations+by+Type.png",
-                    "https://bls-jolts.s3.amazonaws.com/Separations+by+Type+(numbers).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+separations+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+quits+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+layoffs+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Major).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Breakdown).png",
-                    "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+hires+(Current+month+only).png",
-                    "https://bls-jolts.s3.amazonaws.com/Monthly+job+openings.png",
-                    "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
-                    "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
+      "https://bls-jolts.s3.amazonaws.com/Total+quits+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+separations+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+quits+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+layoffs+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Major).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Breakdown).png",
+      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+hires+(Current+month+only).png",
+      // "https://bls-jolts.s3.amazonaws.com/Separations+by+Type.png",
+      "https://bls-jolts.s3.amazonaws.com/Separations+by+Type+(numbers).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+separations+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+quits+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+layoffs+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Major).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Breakdown).png",
+      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+hires+(Current+month+only).png",
+      "https://bls-jolts.s3.amazonaws.com/Monthly+job+openings.png",
+      "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
+      "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
 
-    const interactiveURLS = ["https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json"]
+    const interactiveURLS = [{
+      "link": "https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json",
+      "title": "Monthly job openings",
+      "subtitle": "In millions and seasonally adjusted",
+      "num_series" : 1,
+      "chart_type" : "line"
+
+    }]
     const dateUrl = ["insert date url here"];
     // Create a function to wrap up your component
     // const { useState } = React;
 
     console.log(window.Recharts);
 
-    
-    const { PieChart, 
-      Pie, Line,LineChart,linearGradient,XAxis,YAxis,CartesianGrid,Tooltip, Legend } = window.Recharts
-    
-    const innerdata = [
-      { name: 'C1', value: 100 },
-      { name: 'C2', value: 20 },
-      { name: 'C3', value: 300 },
-      { name: 'C4', value: 90 },
-    ];
 
-    const outerdata = [
-      { name: 'P1', value: 10 },
-      { name: 'P2', value: 100 },
-      { name: 'P3', value: 20 },
-      { name: 'P4', value: 30 },
-      { name: 'P5', value: 90 }
-    ];
+    const { PieChart,
+      Pie, Line, LineChart, linearGradient, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts
 
-    const data = [
-      {
-        "name": "Page A",
-        "uv": 4000,
-        "pv": 2400,
-        "amt": 2400
-      },
-      {
-        "name": "Page B",
-        "uv": 3000,
-        "pv": 1398,
-        "amt": 2210
-      },
-      {
-        "name": "Page C",
-        "uv": 2000,
-        "pv": 9800,
-        "amt": 2290
-      },
-      {
-        "name": "Page D",
-        "uv": 2780,
-        "pv": 3908,
-        "amt": 2000
-      },
-      {
-        "name": "Page E",
-        "uv": 1890,
-        "pv": 4800,
-        "amt": 2181
-      },
-      {
-        "name": "Page F",
-        "uv": 2390,
-        "pv": 3800,
-        "amt": 2500
-      },
-      {
-        "name": "Page G",
-        "uv": 3490,
-        "pv": 4300,
-        "amt": 2100
-      }
-    ]
 
-    const testData = [{"series_name":"Openings","value":7.52,"month_year":"Jan 2019"},{"series_name":"Openings","value":7.07,"month_year":"Feb 2019"},{"series_name":"Openings","value":7.34,"month_year":"Mar 2019"},{"series_name":"Openings","value":7.19,"month_year":"Apr 2019"},{"series_name":"Openings","value":7.31,"month_year":"May 2019"},{"series_name":"Openings","value":7.14,"month_year":"June 2019"},{"series_name":"Openings","value":7.05,"month_year":"July 2019"},{"series_name":"Openings","value":7.17,"month_year":"Aug 2019"},{"series_name":"Openings","value":7.16,"month_year":"Sep 2019"},{"series_name":"Openings","value":7.32,"month_year":"Oct 2019"},{"series_name":"Openings","value":6.92,"month_year":"Nov 2019"},{"series_name":"Openings","value":6.71,"month_year":"Dec 2019"},{"series_name":"Openings","value":7.18,"month_year":"Jan 2020"},{"series_name":"Openings","value":7.0,"month_year":"Feb 2020"},{"series_name":"Openings","value":5.79,"month_year":"Mar 2020"},{"series_name":"Openings","value":4.69,"month_year":"Apr 2020"},{"series_name":"Openings","value":5.58,"month_year":"May 2020"},{"series_name":"Openings","value":6.12,"month_year":"June 2020"},{"series_name":"Openings","value":6.51,"month_year":"July 2020"},{"series_name":"Openings","value":6.36,"month_year":"Aug 2020"},{"series_name":"Openings","value":6.51,"month_year":"Sep 2020"},{"series_name":"Openings","value":6.82,"month_year":"Oct 2020"},{"series_name":"Openings","value":6.88,"month_year":"Nov 2020"},{"series_name":"Openings","value":6.85,"month_year":"Dec 2020"},{"series_name":"Openings","value":7.18,"month_year":"Jan 2021"},{"series_name":"Openings","value":7.76,"month_year":"Feb 2021"},{"series_name":"Openings","value":8.4,"month_year":"Mar 2021"},{"series_name":"Openings","value":9.29,"month_year":"Apr 2021"},{"series_name":"Openings","value":9.84,"month_year":"May 2021"},{"series_name":"Openings","value":10.07,"month_year":"June 2021"},{"series_name":"Openings","value":10.88,"month_year":"July 2021"},{"series_name":"Openings","value":10.96,"month_year":"Aug 2021"},{"series_name":"Openings","value":10.88,"month_year":"Sep 2021"},{"series_name":"Openings","value":11.37,"month_year":"Oct 2021"},{"series_name":"Openings","value":11.23,"month_year":"Nov 2021"},{"series_name":"Openings","value":11.83,"month_year":"Dec 2021"},{"series_name":"Openings","value":11.49,"month_year":"Jan 2022"},{"series_name":"Openings","value":11.6,"month_year":"Feb 2022"},{"series_name":"Openings","value":12.03,"month_year":"Mar 2022"},{"series_name":"Openings","value":11.76,"month_year":"Apr 2022"},{"series_name":"Openings","value":11.44,"month_year":"May 2022"},{"series_name":"Openings","value":10.96,"month_year":"June 2022"},{"series_name":"Openings","value":11.38,"month_year":"July 2022"},{"series_name":"Openings","value":10.2,"month_year":"Aug 2022"},{"series_name":"Openings","value":10.85,"month_year":"Sep 2022"},{"series_name":"Openings","value":10.47,"month_year":"Oct 2022"},{"series_name":"Openings","value":10.75,"month_year":"Nov 2022"},{"series_name":"Openings","value":11.23,"month_year":"Dec 2022"},{"series_name":"Openings","value":10.56,"month_year":"Jan 2023"},{"series_name":"Openings","value":9.97,"month_year":"Feb 2023"},{"series_name":"Openings","value":9.74,"month_year":"Mar 2023"},{"series_name":"Openings","value":10.1,"month_year":"Apr 2023"}]
+    function App() {
 
-    function App(){
-
-      return(
+      return (
         <div>
-        <h1 style={{margin:"auto",textAlign:"center",padding:"20px"}}>JOLTS Data</h1>
-        <h2 style={{margin:"auto",textAlign:"center"}}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>                
-        <InteractiveList list={interactiveURLS}/>
+          <h1 style={{ margin: "auto", textAlign: "center", padding: "20px" }}>JOLTS Data</h1>
+          <h2 style={{ margin: "auto", textAlign: "center" }}>This webpage will contain up-to-date Lightcast-branded charts on JOLTS data!</h2>
+          <InteractiveList list={interactiveURLS} />
         </div>
       )
     }
 
 
-// Use the ReactDOM.render to show your component on the browser
+    // Use the ReactDOM.render to show your component on the browser
     ReactDOM.render(
       <App />,
       rootElement
     )
-</script>
+  </script>
 
 </body>
 
