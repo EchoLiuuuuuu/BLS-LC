@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- this head block does some imports -->
+<!-- we import React, React DOM, Babel (needed for React), prop types (needed for Recharts), and finally, RechartsJS-->
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +18,10 @@
 </head>
 
 <body>
+  <!-- create the top-level div -->
   <div id="root"></div>
 
+  <!-- the style block sets up fonts -->
   <style type="text/css">
     @font-face {
       font-family: "Lausanne";
@@ -38,32 +43,21 @@
     ticklabel {
       font-family: "EverettMono";
     }
-
-    /* html * {
-      font-family: "Lausanne";
-    } */
   </style>
 
+  <!-- this is where the magic happens! notice it's a babel script - this allows the use of 
+JSX, which is javascript with HTML mixed in-->
   <script type="text/babel">
     // Obtain the root 
     const rootElement = document.getElementById('root')
+    // define colors - with multi-series, the lines/bars will appear in this order of colors
     const colors = ["#FF2F59", "#CA61FF", "#18E8F5", "#0A5D62", "#8A8A8A", "#2E5299", "#93293B"]
-    // Create a ES6 class component    
-    class ImageChart extends React.Component {
-      // Use the render function to return JSX component      
-      render() {
-        return (
-          <div style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "100px", width: "50vw", top: "50%", left: "50%" }} className="ImageChart">
-            <p>{this.props.title}</p>
-            <img style={{ top: "50%", left: "50%", margin: "auto", width: "50vw" }} src={this.props.imgurl} />
-          </div>
-        );
-      }
-    }
 
+
+    // this class is a general class that has parameters to produce any of the charts we need
     class InteractiveChart extends React.Component {
 
-      // data = fetch(this.props.dataurl).json();
+      // this is necessary because it extends react components
       constructor(props) {
         super(props)
         this.state = {
@@ -71,11 +65,15 @@
         }
       }
 
+      // react built-in function that runs when the component/chart loads
       componentDidMount = () => {
 
-        // const loadedData = getData(this.props.dataurl)
+        // this is so we can reference this from within a lambda
         let self = this;
         // console.log(this.props)
+
+        // from props (which is a data object passed into this component),
+        // get the dataurl and fetch the JSON file it leads to
         fetch(this.props.dataurl,
           {
             method: 'GET',
@@ -93,6 +91,7 @@
               response.json().then(function (data) {
                 console.log("Got data!")
                 // console.log(data);
+                // remember self= this? now we can access this component's state and set the data from JSON to it
                 self.setState({
                   data: data
                 });
@@ -104,32 +103,56 @@
         console.log(this.state.data);
       }
 
+      // every react component has this function
+      // it must return an HTML object
       render() {
-
+        // ADD MORE CHARTS HERE
         // const data = getData(this.props.dataurl);
         // console.log(this.state.data);
+        // this is to make sure we don't render a chart if the data pull didn't go through
         if (typeof (this.state.data) == []) {
           return <div />
         }
 
+        // but if it did? some functions that check the chart type from the props
         if (this.props.chart_type == "line") {
           return (
+            // wrap the whole thing in a div
+            // make the div centered and about 75% of the screen width
+            // height is fixed because it has to be
+            // add some margin too
             <div style={{ margin: "0 auto", width: "75vw", height: "500px", marginBottom: "150px" }}>
+              {/* commenting in a JSX script is weird
+                anyway, add in the title and subtitles
+                the best thing about doing this in HTML is that they'll never overlap or have sizing issues!
+                */}
               <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
               <h4 style={{ marginTop: "2px", marginBottom: "10px" }}>{this.props.subtitle}</h4>
+              {/*Wrap the chart in a responsivecontainer, which is the magic bit that allows it to resize*/}
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart label="hi" style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }}
+                {/*do a linechart*/}
+                {/*the style attributes center it and add some margins above and below*/}
+                <LineChart style={{ marginRight: "auto", marginLeft: "auto", marginBottom: "5px", marginTop: "10px", width: "100%" }}
                   width={750} height={400} data={this.state.data}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+                  {/*best I can tell with the double margin thing - so the one within the style object is the margins for the whole 
+                  chart HTML object, whereas the margin object outside of the inline style is the margins of the actual graphics
+                  within the HTML object - that probably made no sense, so just play with I guess*/}
+
+
+                  {/* add an x axis*/}
                   <XAxis dataKey={this.props.axis} style={{
                     fontSize: '0.8rem',
                     fontFamily: 'Lausanne',
                   }} />
+                  {/* add a y axis, make sure to format the numbers*/}
                   <YAxis style={{
                     fontSize: '0.7rem',
                     fontFamily: 'EverettMono',
                   }} tickFormatter={this.props.series_format} tickCount={8} />
+                  {/* add a grid*/}
                   <CartesianGrid vertical={false} />
+                  {/*add the hover tooltip, format it a little*/}
                   <Tooltip formatter={(value, name, props) => this.props.series_format(value)}
                     labelStyle={{ fontFamily: "Lausanne" }}
                     itemStyle={{ fontFamily: "Lausanne" }}
@@ -137,8 +160,10 @@
                       borderRadius: 10, borderColor: "#FFDFE6", boxShadow:
                         "0 1px 1px rgba(0,0,0,0.11), 0 2px 2px rgba(0, 0, 0, 0.11),0 4px 4px rgba(0,0,0,0.11),0 8px 8px rgba(0,0,0,0.11),0 16px 16px rgba(0,0,0,0.11),0 32px 32px rgba(0,0,0,0.11)"
                     }} />
+                  {/*add a legend, change the fonts too*/}
                   <Legend formatter={(value, name, props) => <span style={{ fontFamily: "Lausanne" }}>{value}</span>} />
 
+                  {/*for each series element, add a new line, iterate the colors*/}
                   {
                     this.props.series_indices.map((id) => {
                       return (<Line type="monotone" dot={false} name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} stroke={colors[id]} />)
@@ -192,7 +217,58 @@
                   <Legend formatter={(value, name, props) => <span style={{ fontFamily: "Lausanne" }}>{value}</span>} />
                   {
                     this.props.series_indices.map((id) => {
-                      return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} />)
+                      return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} radius={[4, 4, 0, 0]} />)
+                    })
+                  }
+                </BarChart>
+              </ResponsiveContainer>
+              <div>
+                <h4 style={{ marginTop: "2px", display: "inline-block", float: "left" }}>Source: Bureau of Labor Statistics</h4>
+                <img src="Lightcast Tessell.PNG" style={{ width: 96, height: 22, display: "inline-block", float: "right" }} />
+              </div>
+            </div>
+          );
+        }
+
+        if (this.props.chart_type == "bar_h") {
+          return (
+            <div style={{ margin: "0 auto", width: "75vw", height: "500px", marginBottom: "150px" }}>
+              <h2 style={{ marginTop: "30px", marginBottom: "3px" }}>{this.props.title}</h2>
+              <h4 style={{ marginTop: "2px" }}>{this.props.subtitle}</h4>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  width={750}
+                  height={400}
+                  layout="vertical"
+                  data={this.state.data}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 50,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid horizontal={false} />
+                  <XAxis type="number" style={{
+                    fontSize: '0.7rem',
+                    fontFamily: 'EverettMono',
+                  }} tickFormatter={this.props.series_format} tickCount={8} />
+                  <YAxis type="category" dataKey={this.props.axis} style={{
+                    fontSize: '0.8rem',
+                    fontFamily: 'Lausanne',
+                  }} />
+                  <Tooltip formatter={(value, name, props) => this.props.series_format(value)}
+                    labelStyle={{ fontFamily: "Lausanne" }}
+                    itemStyle={{ fontFamily: "Lausanne" }}
+                    contentStyle={{
+                      borderRadius: 10, borderColor: "#FFDFE6", boxShadow:
+                        "0 1px 1px rgba(0,0,0,0.11), 0 2px 2px rgba(0, 0, 0, 0.11),0 4px 4px rgba(0,0,0,0.11),0 8px 8px rgba(0,0,0,0.11),0 16px 16px rgba(0,0,0,0.11),0 32px 32px rgba(0,0,0,0.11)"
+                    }} />
+
+                  <Legend formatter={(value, name, props) => <span style={{ fontFamily: "Lausanne" }}>{value}</span>} />
+                  {
+                    this.props.series_indices.map((id) => {
+                      return (<Bar name={this.props.series_names[id]} dataKey={this.props.series_ids[id]} fill={colors[id]} radius={[0, 4, 4, 0]} />)
                     })
                   }
                 </BarChart>
@@ -207,15 +283,6 @@
 
       }
     }
-
-    const SimpleList = ({ list }) => (
-      <ul>
-
-        {list.map(item => (
-          <ImageChart title="" imgurl={item} />
-        ))}
-      </ul>
-    );
 
     const InteractiveList = ({ list }) => (
       <ul>
@@ -234,37 +301,6 @@
       </ul>
     );
 
-    const urls = ["https://bls-jolts.s3.amazonaws.com/Unemployed+to+Openings+Ratio.png",
-      "https://bls-jolts.s3.amazonaws.com/Total+quits+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+separations+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+quits+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+layoffs+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Major).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+job+openings+(Breakdown).png",
-      "https://bls-jolts.s3.amazonaws.com/Total+monthly+change+in+hires+(Current+month+only).png",
-      // "https://bls-jolts.s3.amazonaws.com/Separations+by+Type.png",
-      "https://bls-jolts.s3.amazonaws.com/Separations+by+Type+(numbers).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+separations+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+quits+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+layoffs+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Major).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+job+openings+(Breakdown).png",
-      "https://bls-jolts.s3.amazonaws.com/PCT+monthly+change+in+hires+(Current+month+only).png",
-      "https://bls-jolts.s3.amazonaws.com/Monthly+job+openings.png",
-      "https://bls-jolts.s3.amazonaws.com/Layoffs+and+Quits+With+Data+Labels+(2018-Now).png",
-      "https://bls-jolts.s3.amazonaws.com/Hires+and+Separations.png"];
-
-    // const interactiveURLS = [{
-    //   "link": "https://bls-jolts.s3.amazonaws.com/json_jolts_ts.json",
-    //   "title": "Monthly job openings",
-    //   "subtitle": "In millions and seasonally adjusted",
-    //   "num_series": 1,
-    //   "chart_type": "line",
-    //   "series_ids":["value"],
-    //   "series_names" :["Openings"]
-    // }]
     const percentFormat = (tick) => {
       return `${tick.toFixed(2)}%`;
     }
@@ -322,7 +358,7 @@
       "link": "https://bls-cpi.s3.amazonaws.com/json_final_yoy_cat_items_change.json",
       "title": "CPI for all urban customers",
       "subtitle": "Percent change from 12 months ago, unadjusted",
-      "chart_type": "bar",
+      "chart_type": "bar_h",
       "axis": "series_title",
       "series_indices": [0, 1, 2],
       "series_ids": ["Madar dada2023", "Apr 2023a", "May 2adad023"],
@@ -340,7 +376,6 @@
     };
 
 
-
     const { PieChart,
       Pie, Line, LineChart, linearGradient, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
       Bar, BarChart } = window.Recharts
@@ -352,11 +387,11 @@
         gotData: false
       });
       let self = setState;
-      
+
       React.useEffect(() => {
 
-  
-          getData().then( (output) => {
+
+        getData().then((output) => {
           console.log(output)
           // console.log(interactiveURLS[interactiveURLS.length-1].series_ids = dataGlobal/)
           const currMoList = [output[2].month_year, output[1].month_year, output[0].month_year]
@@ -364,18 +399,18 @@
           console.log(currMoList)
           // manually updating the two series that require dates
           // there's probably a better way to do this
-          interactiveURLS[interactiveURLS.length - 1].series_names = currMoList
-          interactiveURLS[interactiveURLS.length - 1].series_ids = currMoIDList
+          interactiveURLS[4].series_names = currMoList
+          interactiveURLS[4].series_ids = currMoIDList
 
           interactiveURLS[2].series_names = currMoList
           interactiveURLS[2].series_ids = currMoIDList
-          
+
           console.log(interactiveURLS)
-          self({urls : interactiveURLS, gotData:true})
-          }
-          );
-        
-      },[])
+          self({ urls: interactiveURLS, gotData: true })
+        }
+        );
+
+      }, [])
 
       if (!state.gotData) {
         return (
