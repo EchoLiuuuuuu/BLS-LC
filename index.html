@@ -274,10 +274,6 @@
 
     console.log("Running!")
 
-
-
-
-
     var interactiveURLS = [{
       "link": "https://bls-cpi.s3.amazonaws.com/json_all_change.json",
       "title": "CPI for all urban customers",
@@ -307,8 +303,9 @@
       "chart_type": "bar",
       "axis": "series_name",
       "series_indices": [0, 1, 2],
-      "series_ids": ["Apr 2023", "Mar 2023", "May 2023"],
-      "series_names": ["April 2023", "Mar 2023", "May 2023"],
+      "series_ids": ["Apr 2023", "Mar 2adad023", "May 2023"],
+      // putting random data in the names to verify that it gets them from the server instead
+      "series_names": ["Apriadadl 2023", "Madadadr 2023", "May 2023"],
       "series_format": percentFormat
     },
     {
@@ -328,8 +325,8 @@
       "chart_type": "bar",
       "axis": "series_title",
       "series_indices": [0, 1, 2],
-      "series_ids": ["Mar 2023", "Apr 2023", "May 2023"],
-      "series_names": ["Mar 2023", "April 2023", "May 2023"],
+      "series_ids": ["Madar dada2023", "Apr 2023a", "May 2adad023"],
+      "series_names": ["Mar adad2023", "Apriadadal 2023a", "May 202dada3"],
       "series_format": percentFormat
     }]
 
@@ -365,10 +362,16 @@
           const currMoList = [output[2].month_year, output[1].month_year, output[0].month_year]
           const currMoIDList = [output[2].month_year_s, output[1].month_year_s, output[0].month_year_s]
           console.log(currMoList)
+          // manually updating the two series that require dates
+          // there's probably a better way to do this
           interactiveURLS[interactiveURLS.length - 1].series_names = currMoList
           interactiveURLS[interactiveURLS.length - 1].series_ids = currMoIDList
+
+          interactiveURLS[2].series_names = currMoList
+          interactiveURLS[2].series_ids = currMoIDList
+          
           console.log(interactiveURLS)
-          self({urls : interactiveURLS,gotData:true})
+          self({urls : interactiveURLS, gotData:true})
           }
           );
         
